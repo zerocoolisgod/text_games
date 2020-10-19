@@ -4,20 +4,20 @@
 
 -----------------------------
 -- Localized Globals
-local gameStateManager  = GSTMAN
-local entitySystem      = ENTSYS
-local collisionSystem   = COLSYS
-local camera            = CAMERA
-local resourceManager   = RESMAN
-local gameData          = GAMDAT
-local overWorld         = OVRWLD
-local inputs						= INPUTS
+local gameStateManager  = BGE.gameStateManager
+local entitySystem      = BGE.entitySystem
+local collisionSystem   = BGE.collisionSystem
+local camera            = BGE.camera
+local resourceManager   = BGE.resourceManager
+local gameData          = BGE.gameData
+local overWorld         = BGE.overWorld
+local inputs						= BGE.inputManager
 
 local logSys = {}
 
 function logSys:addOnUpdate(ent, f)
 	-- Generic function to run every update
-	ent:addLogSys(f)
+	ent:_addLogSys(f)
 end
 
 
@@ -54,7 +54,7 @@ function logSys:addAnimation(ent, aId, frms, dly)
 	
 	-------------------------------------
 	--Update Function
-	ent:addLogSys(function(self, dt)
+	ent:_addLogSys(function(self, dt)
 		local anm
 		local sprt
 		
@@ -86,8 +86,8 @@ function logSys:addCollision(ent, solid)
 	ent.collidable = true
 	ent.solid = solid
 	
-	function ent:setSolid(b)
-		self.solid = b
+	function ent:setSolid(bin)
+		self.solid = bin
 	end
 
 	function ent:onBump (self, other) end
@@ -95,18 +95,6 @@ end
 
 
 function logSys:addMovement(ent)
-  if not COLSYS then 
-    love.errhand("COLSYS needs to be globally accessable!")
-    love.event.quit()
-  end
-  
-  if not ENTSYS then 
-    love.errhand("ENTSYS needs to be globally accessable!")
-    love.event.quit()
-  end
-   
-	-- spdX = spdX or 100
-	-- spdY = spdY or 100
 	ent._framAcum = 0
 	ent.vel = {x = 0, y = 0}
 	ent.dir = {x = 1, y = 0}
@@ -119,12 +107,12 @@ function logSys:addMovement(ent)
 		-- velocity by an acceleration percentage accel of 1 changes immediately,
 		-- 0 is never, .5 half's the difference each tick.
 		
-		local tfps = (1/60)
-		self._framAcum = self._framAcum + dt
+		--local tfps = (1/60)
+		--self._framAcum = self._framAcum + dt
 		-- normalize the time step. With a fluxuating dt
 		-- accels get wierd.
-		if self._framAcum >= tfps then
-			self._framAcum = self._framAcum - tfps
+		--if self._framAcum >= tfps then
+		--	self._framAcum = self._framAcum - tfps
 			local curSpeedX = self.vel.x
 			local curSpeedY = self.vel.y
 			local threshold = 1   -- Lower to make more 'floaty'
@@ -141,22 +129,22 @@ function logSys:addMovement(ent)
 	
 			self.vel.x = curSpeedX
 			self.vel.y = curSpeedY
-		end
+		--end
 	end
 
 	
-	ent:addLogSys(function(self, dt)
+	ent:_addLogSys(function(self, dt)
 		local px, py
 		
 		self.pos.x = self.pos.x + (self.vel.x * dt)
 		if self.collidable then 
-			px = COLSYS:ckCollison(self, ENTSYS:getEnts())
+			px = collisionSystem:ckCollison(self, entitySystem:getEnts())
 		end
 		if px then self.pos.x = px.x end	
 	
     self.pos.y = self.pos.y + (self.vel.y * dt)
 		if self.collidable then 
-			py = COLSYS:ckCollison(self, ENTSYS:getEnts())
+			py = collisionSystem:ckCollison(self, entitySystem:getEnts())
 		end
 		if py then self.pos.y = py.y end
 
@@ -178,7 +166,7 @@ function logSys:addState(ent, id, init, state)
 		self.nState = s
 	end
 	
-	ent:addLogSys(function(e, dt)
+	ent:_addLogSys(function(e, dt)
 		-- Check for state change, run initial
 		if e.cState ~= e.nState then
 			e.cState = e.nState

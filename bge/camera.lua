@@ -31,6 +31,33 @@ function Camera:init()
 end
 
 
+function Camera:setLowResMode(mode)
+  love.window.setMode(0, 0)
+  local screenWidth, screenHeight = love.graphics.getDimensions()
+  
+  local modes = {
+    nes = {x = 256, y = 240}, --(32x30) 8x8 pixel sprites
+    gbc = {x = 160, y = 144}, --(20x18) 8x8 pixel sprites
+    gba = {x = 240, y = 160}, --(30x20) 8x8 pixel sprites
+    tpg = {x = 320, y = 180}  --(40x22) 8x8 pixel sprites (The Princess Game)
+  }
+  
+  local camRes = modes[mode]
+  local windowScale = 3
+  local windowSize = {x = camRes.x * windowScale, y = camRes.y * windowScale}
+  --local fullscreenSize = {x = 1366, y = 768}
+  local fullscreenSize = {x = screenWidth, y = screenHeight}
+  local mode = "window"
+
+  self:init()
+  self:setViewSize(camRes.x, camRes.y)
+  self:setWindowSize(windowSize.x, windowSize.y)
+  self:setFullscreenSize(fullscreenSize.x, fullscreenSize.y)
+  self:setMode(mode)
+end
+
+
+
 function Camera:update(dt)
   if self.focus then
     local camPosX, camPosY
@@ -52,6 +79,7 @@ function Camera:set ()
   scale(self.scale.x, self.scale.y)
   translate(-self.pos.x, -self.pos.y)
 end
+
 
 function Camera:unset ()
   pop()
@@ -93,7 +121,6 @@ end
 function Camera:toggleFullscreen ()
   local mode = 'full'
   if self.flags.fullscreen then mode = 'window' end
-
 
   self:setMode(mode)
 end

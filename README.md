@@ -1,1 +1,2 @@
-# text_games
+# Basic Game Engine
+Template for all new games

@@ -15,7 +15,7 @@ local lgRect = love.graphics.rectangle
 -- Components
 function renSys:addOnDraw(ent,f)
 	-- Generic function to run every draw
-	ent:addRenSys(f)
+	ent:_addRenSys(f)
 end
 
 
@@ -26,17 +26,19 @@ function renSys:addRectangle(ent, c)
 		ent.color = c
 	end
 	
-	ent:addRenSys(function(e)
-		lgSetColor(e.color)
-		lgRect("fill", e.pos.x, e.pos.y, e.size.w, e.size.h)
-    lgSetColor(1,1,1)
-	end)
+	ent:_addRenSys(
+    function(e)
+      lgSetColor(e.color)
+      lgRect("fill", e.pos.x, e.pos.y, e.size.w, e.size.h)
+      lgSetColor(1,1,1)
+    end
+  )
 end
 
 
 function renSys:addSprite(ent, sheet, width, height, quad)
-  if not RESMAN then 
-    love.errhand("RESMAN needs to be globally accessable!")
+  if not BGE.resourceManager then 
+    love.errhand("BGE.resourceManager needs to be globally accessable!")
     love.event.quit()
   end
 
@@ -48,7 +50,7 @@ function renSys:addSprite(ent, sheet, width, height, quad)
 
 	ent.sheet = sheet
   ent.frame = quad or 1
-  ent.quads = RESMAN:getQuads(sheet, width, height, margin, spacing)
+  ent.quads = BGE.resourceManager:getQuads(sheet, width, height, margin, spacing)
 	ent.scale = {x = 1, y = 1}
 	ent.radian = 0
   ent.orig = {x = width/2, y = height/2}
@@ -106,7 +108,7 @@ function renSys:addSprite(ent, sheet, width, height, quad)
 
 	-------------------------------------
 	-- Drawing function
-	ent:addRenSys(function(e)
+	ent:_addRenSys(function(e)
 		-- drawable (quad) x y radian scaleX scaleY originX originY
     local q = e.quads[e.frame]
     local x = e.pos.x + e.size.w/2 + e.offset.x
