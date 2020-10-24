@@ -4,7 +4,7 @@ local wl = {}
 
 for i = 1, 15 do
   wl[i] = {}
-  wl[i].img = false
+  wl[i].img = true
   wl[i].char = {}
   wl[i].word = ""
 end

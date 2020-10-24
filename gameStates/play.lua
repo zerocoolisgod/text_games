@@ -64,7 +64,7 @@ end
 function state:getNewWord()
   self.word = self.words[self.wordIndex].word
   if self.words[self.wordIndex].img then
-    self.wordImage = BGE.resourceManager:getImage(self.words[self.wordIndex].img)
+    self.wordImage = BGE.resourceManager:getImage(self.words[self.wordIndex].word)
   end
 
   self.chars = shuffleTable(self.words[self.wordIndex].char)
