@@ -1,34 +1,17 @@
--- Princess Game DX
-
 -- Imports
 BGE = require("bge.basicGameEngine")
 
 
--- Localized love
-local lgRect = love.graphics.rectangle
-local lgDraw = love.graphics.draw
-local lgSetColor = love.graphics.setColor
-local lgPop = love.graphics.pop
-local lgPush = love.graphics.push
-local lgScale = love.graphics.scale
-
-
--- Localized Vars
-local why = "wtf"
-
-
-
-
+ 
 -------------------------------------------------------------------------------
 -- Load Function
 -------------------------------------------------------------------------------
 function love.load(arg)
   BGE:load()
-
-  local plr = newPlayer(16,16)
-  BGE.entitySystem:addEntity(plr)
-  BGE.camera:setFocus(plr)
-  makeWalls()
+  BGE.gameStateSystem:addState("play", require("gameStates.play"))
+  BGE.gameStateSystem:addState("loadGame", require("gameStates.loadGame"))
+  BGE.gameStateSystem:setState("loadGame")
+  BGE:setUseGameStates(true)
 end
 
 
@@ -55,58 +38,21 @@ function love.focus(f)
 end
 
 
-function love.keypressed(key, isrepeat)
-  if key == 'escape' or key == 'q' then love.event.quit() end
-  if key == "f" then _CAMERA:toggleFullscreen() end
+function love.textinput(t)
+  BGE.gameStateSystem:textinput(t)
 end
 
 
-function love.joystickpressed(joystick, button)
+function love.keypressed(key)
+  BGE.gameStateSystem:keypressed(key)
 end
-
-
-function love.joystickaxis(joystick, axis, value)
-end
-
-
 
 -------------------------------------------------------------------------------
--- Entites
 -------------------------------------------------------------------------------
-function newPlayer(x,y)
-  local p = BGE.entity:new(x,y,16,16)
-  p:addRectangle({0.2, 0.2, 1, 1})
-  p:addCollision(true)
-  p:addMovement()
-  
-
-  p:addOnUpdate(
-    function(self, dt)
-      local moveSpeedX, moveSpeedY = 0,0
-      local AccelerationX, AccelerationY = 1,1
-      
-      if BGE.inputManager:isDown("up") then moveSpeedY = -80 end
-      if BGE.inputManager:isDown("down") then moveSpeedY = 80 end
-      if BGE.inputManager:isDown("left") then moveSpeedX = -80 end
-      if BGE.inputManager:isDown("right") then moveSpeedX = 80 end
-      
-      self:move(moveSpeedX, moveSpeedY, AccelerationX, AccelerationY, dt)
-    end
-  )
-  
-  return p
-end
-
-
-function newWall(x,y)
-  local e = BGE.entity:new(x,y,16,16)
-  e:addRectangle({0.2, 1, 0.2, 1})
-  e:addCollision(true)
-  return e
-end
-
-function makeWalls()
-  for x = 3, 11 do
-    BGE.entitySystem:addEntity(newWall(x*16, 100))
-  end
-end
+--* Build the actual fucking spelling game for Beth to use!!
+--*
+--* Consolidate "BGE.objects.textBox" with "BGE.textSystem"
+--* Merge changes in this BGE with the BGE-Master repo
+--* Merge this into its own repo
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------

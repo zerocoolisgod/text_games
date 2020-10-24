@@ -10,8 +10,6 @@ local scale     = lg.scale
 local m_floor   = math.floor
 
 
-
-
 local Camera = {}
 
 function Camera:init()
@@ -31,33 +29,6 @@ function Camera:init()
 end
 
 
-function Camera:setLowResMode(mode)
-  love.window.setMode(0, 0)
-  local screenWidth, screenHeight = love.graphics.getDimensions()
-  
-  local modes = {
-    nes = {x = 256, y = 240}, --(32x30) 8x8 pixel sprites
-    gbc = {x = 160, y = 144}, --(20x18) 8x8 pixel sprites
-    gba = {x = 240, y = 160}, --(30x20) 8x8 pixel sprites
-    tpg = {x = 320, y = 180}  --(40x22) 8x8 pixel sprites (The Princess Game)
-  }
-  
-  local camRes = modes[mode]
-  local windowScale = 3
-  local windowSize = {x = camRes.x * windowScale, y = camRes.y * windowScale}
-  --local fullscreenSize = {x = 1366, y = 768}
-  local fullscreenSize = {x = screenWidth, y = screenHeight}
-  local mode = "window"
-
-  self:init()
-  self:setViewSize(camRes.x, camRes.y)
-  self:setWindowSize(windowSize.x, windowSize.y)
-  self:setFullscreenSize(fullscreenSize.x, fullscreenSize.y)
-  self:setMode(mode)
-end
-
-
-
 function Camera:update(dt)
   if self.focus then
     local camPosX, camPosY
@@ -72,6 +43,7 @@ end
 
 
 function Camera:set ()
+  -- draws at camera's position
   self.scale = self.zoomW
   if self.flags.fullscreen then self.scale = self.zoomF end
   push()
@@ -80,38 +52,27 @@ function Camera:set ()
   translate(-self.pos.x, -self.pos.y)
 end
 
+function Camera:setGUI ()
+  -- draws at 0,0 position
+  self.scale = self.zoomW
+  if self.flags.fullscreen then self.scale = self.zoomF end
+  push()
+  scale(self.scale.x, self.scale.y)
+end
 
 function Camera:unset ()
+  -- releases the view
   pop()
 end
 
 
-function Camera:setGui ()
-  self.scale = self.zoomW
-  if self.flags.fullscreen then self.scale = self.zoomF end
-  push()
-  --rotate(-self.rot)
-  scale(self.scale.x, self.scale.y)
-  --translate(-self.pos.x, -self.pos.y)
-end
-
-
-function Camera:centerOn (posX, posY,dt)
+function Camera:centerOn (posX, posY)
   -- sets position to be centered on pos
   -- size is the constant resolution that we are working from
   self.pos.x = posX - self.halfView.x
   self.pos.y = posY - self.halfView.y
 end
 
-function Camera:setPos(x,y)
-  -- sets position of top left corner
-  self.pos.x = x
-  self.pos.y = y
-end
-
-function Camera:getPos()
-  return self.pos
-end
 
 function Camera:resetPos ()
   self.pos.x = 0
@@ -125,20 +86,12 @@ function Camera:toggleFullscreen ()
   self:setMode(mode)
 end
 
-function Camera:setFocus (obj)
-  -- object to follow, camera:update() must be called back for this to work
-  self.focus = obj
-end
 
 function Camera:unsetFocus ()
   self.focus = nil
   self:resetPos()
 end
 
-function Camera:setLimit (rightSide, bottomSide)
-  self.limit.r = rightSide - self.viewSize.x
-  self.limit.b = bottomSide - self.viewSize.y
-end
 
 function Camera:clamp ()
   -- make sure camera stays inside its limits
@@ -154,6 +107,25 @@ end
 -------------------------------------------------------------------------------
 -- Setters
 -------------------------------------------------------------------------------
+function Camera:setFocus (obj)
+  -- object to follow, camera:update() must be called back for this to work
+  self.focus = obj
+end
+
+
+function Camera:setPos(x,y)
+  -- sets position of top left corner
+  self.pos.x = x
+  self.pos.y = y
+end
+
+
+function Camera:setLimit (rightSide, bottomSide)
+  self.limit.r = rightSide - self.viewSize.x
+  self.limit.b = bottomSide - self.viewSize.y
+end
+
+
 function Camera:setViewSize (x,y)
   -- Internal resolution.
   -- All object will use a coordinate system based off this resolution.
@@ -164,10 +136,6 @@ function Camera:setViewSize (x,y)
   self.halfView.y = y/2
 end
 
-function Camera:getViewSize ()
-  -- Internal resolution.
-  return {x = self.viewSize.x, y = self.viewSize.y}
-end
 
 function Camera:setWindowSize (x,y)
   -- sets display resolution when windowed
@@ -196,6 +164,33 @@ function Camera:setMode (m)
   self.windowSize.y = love.graphics.getHeight()
 end
 
+
+function Camera:setLowResMode(mode)
+  love.window.setMode(0, 0)
+  local screenWidth, screenHeight = love.graphics.getDimensions()
+  
+  local modes = {
+    nes = {x = 256, y = 240}, --(32x30) 8x8 pixel sprites
+    gbc = {x = 160, y = 144}, --(20x18) 8x8 pixel sprites
+    gba = {x = 240, y = 160}, --(30x20) 8x8 pixel sprites
+    tpg = {x = 320, y = 180}  --(40x22) 8x8 pixel sprites (The Princess Game)
+  }
+  
+  local camRes = modes[mode]
+  local windowScale = 3
+  local windowSize = {x = camRes.x * windowScale, y = camRes.y * windowScale}
+  --local fullscreenSize = {x = 1366, y = 768}
+  local fullscreenSize = {x = screenWidth, y = screenHeight}
+  local displayMode = "window"
+
+  self:init()
+  self:setViewSize(camRes.x, camRes.y)
+  self:setWindowSize(windowSize.x, windowSize.y)
+  self:setFullscreenSize(fullscreenSize.x, fullscreenSize.y)
+  self:setMode(displayMode)
+end
+
+
 function Camera:setWindowedZoom (x,y)
   self.zoomW.x = x
   self.zoomW.y = y or x
@@ -204,6 +199,20 @@ end
 function Camera:setFullscreenZoom (x,y)
   self.zoomF.x = x
   self.zoomF.y = y or x
+end
+
+
+-------------------------------------------------------------------------------
+-- Getters
+-------------------------------------------------------------------------------
+function Camera:getViewSize()
+  -- Internal resolution.
+  return {x = self.viewSize.x, y = self.viewSize.y}
+end
+
+
+function Camera:getPos()
+  return self.pos
 end
 
 return Camera

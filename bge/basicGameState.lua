@@ -18,6 +18,10 @@ function state:keypressed(key, isrepeat)
 end
 
 
+function state:textinput(t)
+end
+
+
 function state:joystickpressed(joystick, button)
 end
 

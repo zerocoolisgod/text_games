@@ -75,3 +75,12 @@ function findIntersect(l1p1x,l1p1y, l1p2x,l1p2y, l2p1x,l2p1y, l2p2x,l2p2y, seg1,
 	end
 	return x,y
 end
+
+
+function shuffleTable(t)
+  for i = #t, 2, -1 do
+    local j = math.random(i)
+    t[i], t[j] = t[j], t[i]
+	end
+	return t
+end
