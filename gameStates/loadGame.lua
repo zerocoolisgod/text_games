@@ -11,6 +11,7 @@ function state:init()
   math.randomseed(os.time())
   self.tmr = 0.2
   BGE.resourceManager:loadImages("data/imgs/")
+  BGE.resourceManager:loadSounds("data/snds/")
 end
 
 

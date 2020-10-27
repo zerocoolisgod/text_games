@@ -118,14 +118,16 @@ end
 
 
 function rsm:addAud (resource,id)
-  
-  self.res.aud[id] = newSound(resource)
+  print(id)
+  self.res.aud[id] = newSound(resource, "static")
 end
 
 
-function rsm:playSound (id)
+function rsm:playSound (id, volume)
+  local v = volume or 0.1
   if self.res.aud[id] then
     self.res.aud[id]:stop()
+    self.res.aud[id]:setVolume(v)
     self.res.aud[id]:play()
   else
     lError(id..' is not a valid sound file.')

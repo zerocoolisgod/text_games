@@ -5,7 +5,7 @@ local wl = {}
 for i = 1, 15 do
   wl[i] = {}
   wl[i].img = true
-  wl[i].char = {}
+  wl[i].chars = {}
   wl[i].word = ""
 end
 
@@ -29,7 +29,7 @@ wl[15].word = "built"
 for i = 1, #wl do
   for j = 1, #wl[i].word do
     local c = wl[i].word:sub(j,j)
-    table.insert(wl[i].char,c)
+    table.insert(wl[i].chars, c)
   end
 end
 

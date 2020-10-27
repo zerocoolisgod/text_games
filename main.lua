@@ -1,6 +1,8 @@
 -- Imports
 BGE = require("bge.basicGameEngine")
-
+local _BS_ = {}
+local _DEBUG_ = false
+local _test_tab_ = {}
 
  
 -------------------------------------------------------------------------------
@@ -12,6 +14,7 @@ function love.load(arg)
   BGE.gameStateSystem:addState("loadGame", require("gameStates.loadGame"))
   BGE.gameStateSystem:setState("loadGame")
   BGE:setUseGameStates(true)
+  if _DEBUG_ then _BS_:load() end
 end
 
 
@@ -20,6 +23,7 @@ end
 -------------------------------------------------------------------------------
 function love.update(dt)
   BGE:update(dt)
+  if _DEBUG_ then _BS_:update(dt) end
 end
 
 
@@ -28,6 +32,7 @@ end
 -------------------------------------------------------------------------------
 function love.draw()
   BGE:draw()
+  if _DEBUG_ then _BS_:draw() end
 end
 
 
@@ -47,12 +52,21 @@ function love.keypressed(key)
   BGE.gameStateSystem:keypressed(key)
 end
 
--------------------------------------------------------------------------------
--------------------------------------------------------------------------------
---* Build the actual fucking spelling game for Beth to use!!
---*
---* Consolidate "BGE.objects.textBox" with "BGE.textSystem"
---* Merge changes in this BGE with the BGE-Master repo
---* Merge this into its own repo
--------------------------------------------------------------------------------
--------------------------------------------------------------------------------
+
+--=============================================================================
+-- DEBUG CALLBACKS
+--=============================================================================
+
+
+function _BS_:load()
+  
+end
+
+
+function _BS_:update(dt)
+end
+
+
+function _BS_:draw() 
+
+end

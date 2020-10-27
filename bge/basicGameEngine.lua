@@ -34,7 +34,7 @@ function BGE:load()
   love.graphics.setFont(font)
 
   -- Set Volume
-  local volume = 0
+  local volume = 1
   love.audio.setVolume(volume)
   if self.onLoad then self:onLoad() end
 end
