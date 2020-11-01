@@ -75,3 +75,21 @@ function findIntersect(l1p1x,l1p1y, l1p2x,l1p2y, l2p1x,l2p1y, l2p2x,l2p2y, seg1,
 	end
 	return x,y
 end
+
+function copyTable(t)
+	local tab = {}
+	for i = 1, #t do
+		table.insert(tab,t[i])
+	end
+	return tab
+end
+
+function shuffleTable(t)
+	local newTable = copyTable(t)
+
+  for i = #newTable, 2, -1 do
+    local j = math.random(i)
+    newTable[i], newTable[j] = newTable[j], newTable[i]
+	end
+	return newTable
+end

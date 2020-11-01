@@ -16,7 +16,7 @@ ipm.inputs = {
 }
 
 
-function ipm:setInput(key)
+function ipm:setInput(id, key)
   self.inputs[id].key = key
 end
 

@@ -36,8 +36,14 @@ function gsm:addState(id, state)
 	self.states[id] = state
 end
 
+
 function gsm:keypressed(key, isrepeat)
 	self.states[self.currentState]:keypressed(key, isrepeat)
+end
+
+
+function gsm:textinput(t)
+	self.states[self.currentState]:textinput(t)
 end
 
 
